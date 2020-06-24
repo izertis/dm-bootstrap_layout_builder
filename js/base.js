@@ -31,6 +31,17 @@
           var colsConfig = cols.split('_');
           var colsLabel = $(this).find('label');
 
+
+          // Show a preview
+          // If selected, clone the label and put it into a preview div, collapse the other options
+          // When clicked, show all options
+          // When selected again, replace the preview and collapse again
+
+          // colsLabel.on('click', function() {
+          //   $(this).clone().insertAfter($(this).closest('fieldset > legend'));
+          // });
+
+
           // Wrap our radio labels and display as a tooltip.
           colsLabel.wrapInner('<div class="blb_tooltip blb_tooltip-lg"></div>');
 
