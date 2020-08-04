@@ -276,7 +276,7 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
           'title' => $tab['title'],
           'target' => $tab['machine_name'],
           'active' => isset($tab['active']) && $tab['active'] == TRUE ? 'active' : '',
-          'icon' => t('<img class="blb_icon" src="/' . drupal_get_path('module', 'bootstrap_layout_builder') . '/images/ui/' . ($tab['icon'] ? $tab['icon'] : 'default.svg') . '" />'),
+          'icon' => t('<img class="blb_icon" src="/' . drupal_get_path('module', 'bootstrap_styles') . '/images/ui/' . ($tab['icon'] ? $tab['icon'] : 'default.svg') . '" />'),
         ],
       ];
 
@@ -455,7 +455,7 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
     $style_tab = ['ui', 'tab_content', 'appearance'];
     $settings_tab = ['ui', 'tab_content', 'settings'];
 
-    // Save sction label.
+    // Save section label.
     $this->configuration['label'] = $form_state->getValue(array_merge($settings_tab, ['label']));
 
     // Container type.
