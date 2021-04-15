@@ -41,6 +41,7 @@ use Drupal\bootstrap_layout_builder\LayoutOptionInterface;
  *     "layout_id" = "layout_id",
  *     "label" = "label",
  *     "structure" = "structure",
+ *     "is_default" = "is_default",
  *     "breakpoints" = "breakpoints",
  *     "weight" = "weight",
  *   },
@@ -87,6 +88,13 @@ class LayoutOption extends ConfigEntityBase implements LayoutOptionInterface {
    * @var array
    */
   protected $breakpoints;
+
+  /**
+   * Set the option as default for breakpoints.
+   *
+   * @var bool
+   */
+  protected $is_default;
 
   /**
    * Order of options on the config page & Layout Builder add/update forms.
@@ -190,6 +198,24 @@ class LayoutOption extends ConfigEntityBase implements LayoutOptionInterface {
   public function getLayoutById($layout_id) {
     $layout = $this->entityTypeManager()->getStorage('blb_layout')->load($layout_id);
     return $layout;
+  }
+
+  /**
+   * Set the is_default data.
+   *
+   * @param $is_default
+   *
+   * @return mixed|void
+   */
+  public function setIsDefault($is_default) {
+    $this->is_default = $is_default;
+  }
+
+  /**
+   * Return if option is the default.
+   */
+  public function isDefault() {
+    return $this->is_default;
   }
 
 }

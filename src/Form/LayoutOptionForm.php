@@ -2,6 +2,7 @@
 
 namespace Drupal\bootstrap_layout_builder\Form;
 
+use Drupal\bootstrap_layout_builder\Event\LayoutOptionUpdatedOrCreatedEvent;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityForm;
@@ -122,6 +123,13 @@ class LayoutOptionForm extends EntityForm implements ContainerInjectionInterface
       '#default_value' => $option->getBreakpointsIds() ?: [],
     ];
 
+    $form['is_default'] = [
+      '#title' => $this->t('Is Default'),
+      '#type' => 'checkbox',
+      '#description' => $this->t('Select if this should be the default option for the selected breakpoints.'),
+      '#default_value' => $option->isDefault(),
+    ];
+
     return $form;
   }
 
@@ -185,6 +193,9 @@ class LayoutOptionForm extends EntityForm implements ContainerInjectionInterface
     else {
       $message = $this->t('Added a layout option for @label.', ['@label' => $entity->label()]);
     }
+    $event = new LayoutOptionUpdatedOrCreatedEvent($entity);
+    $event_dispatcher = \Drupal::service('event_dispatcher');
+    $event_dispatcher->dispatch(LayoutOptionUpdatedOrCreatedEvent::NAME, $event);
     $this->messenger()->addStatus($message);
     $form_state->setRedirect(
       'entity.blb_layout.options_form',

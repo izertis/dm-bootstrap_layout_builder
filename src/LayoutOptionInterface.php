@@ -109,4 +109,20 @@ interface LayoutOptionInterface extends ConfigEntityInterface {
    */
   public function getLayoutById($layout_id);
 
+  /**
+   * Set if the layout option is the default for the selected breakpoints.
+   *
+   * @param $is_default
+   *
+   * @return mixed
+   */
+  public function setIsDefault($is_default);
+
+  /**
+   * Return if option is the default.
+   *
+   * @return mixed
+   */
+  public function isDefault();
+
 }
