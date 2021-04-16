@@ -1,5 +1,0 @@
-services:
-  bootstrap_layout_builder_layout_option_updated_or_created:
-    class: '\Drupal\bootstrap_layout_builder\EventSubscriber\LayoutOptionUpdatedOrCreatedSubscriber'
-    tags:
-      - { name: 'event_subscriber' }
