@@ -2,7 +2,6 @@
 
 namespace Drupal\bootstrap_layout_builder\Form;
 
-use Drupal\bootstrap_layout_builder\Event\LayoutOptionUpdatedOrCreatedEvent;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityForm;
@@ -109,10 +108,14 @@ class LayoutOptionForm extends EntityForm implements ContainerInjectionInterface
     ];
 
     $breakpoints = [];
+    $default_breakpoints = [];
     $blb_breakpoint = $this->entityTypeManager->getStorage('blb_breakpoint')->getQuery()->sort('weight', 'ASC')->execute();
     foreach ($blb_breakpoint as $breakpoint_id) {
       $breakpoint_entity = $this->entityTypeManager->getStorage('blb_breakpoint')->load($breakpoint_id);
       $breakpoints[$breakpoint_id] = $breakpoint_entity->label();
+      if (array_search($breakpoint_id, $option->getBreakpointsIds()) !== FALSE) {
+        $default_breakpoints[$breakpoint_id] = $breakpoint_entity->label();
+      }
     }
 
     $form['breakpoints'] = [
@@ -121,16 +124,35 @@ class LayoutOptionForm extends EntityForm implements ContainerInjectionInterface
       '#description' => $this->t('Select which breakpoints uses this layout option'),
       '#options' => $breakpoints,
       '#default_value' => $option->getBreakpointsIds() ?: [],
+      '#ajax' => [
+        'callback' => '::ajax_replace_default_breakpoints_callback',
+        'wrapper' => 'default-breakpoints-wrapper',
+        'method' => 'replace',
+      ],
     ];
 
-    $form['is_default'] = [
-      '#title' => $this->t('Is Default'),
-      '#type' => 'checkbox',
-      '#description' => $this->t('Select if this should be the default option for the selected breakpoints.'),
-      '#default_value' => $option->isDefault(),
+    $form['default_breakpoints'] = [
+      '#title' => $this->t('Default layout option for'),
+      '#type' => 'checkboxes',
+      '#description' => $this->t('Select the breakpoints if you want to make this layout option the default option for them.
+        Note: if the breakpoint already selected as the default option for another layout option, this selection will override it.'),
+      '#options' => $default_breakpoints,
+      '#default_value' => $option->getDefaultBreakpointsIds() ?: [],
+      '#prefix' => '<div id="default-breakpoints-wrapper">',
+      '#suffix' => '</div>',
     ];
 
     return $form;
+  }
+
+  /**
+   * @param $form
+   * @param $form_state
+   *
+   * @return mixed
+   */
+  public function ajax_replace_default_breakpoints_callback($form, $form_state) {
+    return $form['default_breakpoints'];
   }
 
   /**
@@ -193,9 +215,6 @@ class LayoutOptionForm extends EntityForm implements ContainerInjectionInterface
     else {
       $message = $this->t('Added a layout option for @label.', ['@label' => $entity->label()]);
     }
-    $event = new LayoutOptionUpdatedOrCreatedEvent($entity);
-    $event_dispatcher = \Drupal::service('event_dispatcher');
-    $event_dispatcher->dispatch(LayoutOptionUpdatedOrCreatedEvent::NAME, $event);
     $this->messenger()->addStatus($message);
     $form_state->setRedirect(
       'entity.blb_layout.options_form',

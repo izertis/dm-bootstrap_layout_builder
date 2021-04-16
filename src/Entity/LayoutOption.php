@@ -4,6 +4,7 @@ namespace Drupal\bootstrap_layout_builder\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\bootstrap_layout_builder\LayoutOptionInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
  * Defines the layout option entity class.
@@ -41,7 +42,7 @@ use Drupal\bootstrap_layout_builder\LayoutOptionInterface;
  *     "layout_id" = "layout_id",
  *     "label" = "label",
  *     "structure" = "structure",
- *     "is_default" = "is_default",
+ *     "default_breakpoints" = "default_breakpoints",
  *     "breakpoints" = "breakpoints",
  *     "weight" = "weight",
  *   },
@@ -90,11 +91,11 @@ class LayoutOption extends ConfigEntityBase implements LayoutOptionInterface {
   protected $breakpoints;
 
   /**
-   * Set the option as default for breakpoints.
+   * The enabled default breakpoints for this option.
    *
-   * @var bool
+   * @var array
    */
-  protected $is_default;
+  protected $default_breakpoints;
 
   /**
    * Order of options on the config page & Layout Builder add/update forms.
@@ -201,21 +202,58 @@ class LayoutOption extends ConfigEntityBase implements LayoutOptionInterface {
   }
 
   /**
-   * Set the is_default data.
-   *
-   * @param $is_default
-   *
-   * @return mixed|void
+   * @return array
    */
-  public function setIsDefault($is_default) {
-    $this->is_default = $is_default;
+  public function getDefaultBreakpointsIds() {
+    $ids = [];
+    if ($this->default_breakpoints) {
+      foreach ($this->default_breakpoints as $key => $value) {
+        if ($value) {
+          $ids[] = $key;
+        }
+      }
+    }
+    return $ids;
   }
 
   /**
-   * Return if option is the default.
+   * @return array
    */
-  public function isDefault() {
-    return $this->is_default;
+  public function getDefaultBreakpointsLabels() {
+    $labels = [];
+    if ($this->default_breakpoints) {
+      foreach ($this->default_breakpoints as $breakpoint_id) {
+        $breakpoint = $this->entityTypeManager()->getStorage('blb_breakpoint')->load($breakpoint_id);
+        if ($breakpoint) {
+          $labels[] = $breakpoint->label();
+        }
+      }
+    }
+    return $labels;
+  }
+
+  /**
+   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
+   * @param bool $update
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+    foreach ($this->getLayout()->getLayoutOptions() as $layoutOption) {
+      if ($layoutOption->getOriginalId() !== $this->getOriginalId()) {
+        if (array_intersect($this->getDefaultBreakpointsIds(), $layoutOption->getDefaultBreakpointsIds())) {
+          $breakpoints = $this->entityTypeManager()->getStorage('blb_breakpoint')->loadMultiple(
+            array_diff($layoutOption->getDefaultBreakpointsIds(), $this->getDefaultBreakpointsIds())
+          );
+          $layoutOption->default_breakpoints = array_map(function ($breakpoint) {
+            return $breakpoint->id();
+          }, $breakpoints);
+          $layoutOption->save();
+        }
+      }
+    }
   }
 
 }

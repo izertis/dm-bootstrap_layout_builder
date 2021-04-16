@@ -383,7 +383,7 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
         $options = $this->entityTypeManager->getStorage('blb_layout_option')->loadByProperties(['layout_id' => $layout_id]);
         $default_value = NULL;
         foreach ($options as $layoutOption) {
-          if (array_key_exists($layoutOption->getStructureId(), $layout_options) && $layoutOption->isDefault()) {
+          if (array_search($breakpoint->id(), $layoutOption->getDefaultBreakpointsIds()) !== FALSE) {
             $default_value = $layoutOption->getStructureId();
           }
         }

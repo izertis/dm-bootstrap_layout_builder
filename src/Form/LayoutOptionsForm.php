@@ -33,7 +33,7 @@ class LayoutOptionsForm extends EntityForm {
 
     $form['layout_option']['links'] = [
       '#type' => 'table',
-      '#header' => [$this->t('Label'), $this->t('Structure'), $this->t('Breakpoints'), $this->t('Weight'), $this->t('Is Default'), $this->t('Operations')],
+      '#header' => [$this->t('Label'), $this->t('Structure'), $this->t('Breakpoints'), $this->t('Weight'), $this->t('Default Option For'), $this->t('Operations')],
       '#empty' => $this->t('No layout options available. <a href=":link">Add a layout option</a>', [':link' => Url::fromRoute('entity.blb_layout_option.add_form', ['blb_layout' => $this->entity->id()])->toString()]),
       '#attributes' => ['id' => 'layout_option'],
       '#tabledrag' => [
@@ -69,9 +69,9 @@ class LayoutOptionsForm extends EntityForm {
         '#attributes' => ['class' => ['layout-option-weight']],
       ];
 
-      $form['layout_option']['links'][$id]['is_default'] = [
+      $form['layout_option']['links'][$id]['default_breakpoints'] = [
         '#type' => 'label',
-        '#title' => $option->isDefault() ? 'True' : 'False',
+        '#title' => $option->getDefaultBreakpointsLabels() ? implode(', ', $option->getDefaultBreakpointsLabels()) : '',
       ];
 
       $links['edit'] = [
