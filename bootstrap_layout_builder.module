@@ -5,6 +5,7 @@
  * Bootstrap Layout Builder module.
  */
 
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -46,7 +47,6 @@ function bootstrap_layout_builder_theme() {
     'blb_section' => [
       'template' => 'blb-section',
       'render element' => 'content',
-      'base hook' => 'layout',
     ],
   ];
 }
@@ -61,4 +61,17 @@ function bootstrap_layout_builder_preprocess_blb_section(&$variables) {
     }
     $variables['region_attributes'][$name] = new Attribute($variables['content'][$name]['#attributes']);
   }
+}
+
+/**
+ * Add 'default_breakpoints' field to 'blb_layout_option' entities.
+ */
+function bootstrap_layout_builder_update_8005() {
+  $field_storage_definition = BaseFieldDefinition::create('default_breakpoints')
+    ->setLabel(t('Default Breakpoints'))
+    ->setDescription(t('Breakpoints you want to make this layout option the default.'))
+    ->setRevisionable(FALSE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('default_breakpoints', 'blb_layout_option', 'bootstrap_layout_builder', $field_storage_definition);
 }
