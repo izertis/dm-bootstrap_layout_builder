@@ -4,6 +4,7 @@ namespace Drupal\bootstrap_layout_builder\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\bootstrap_layout_builder\LayoutOptionInterface;
+use Drupal\Core\Entity\Annotation\ConfigEntityType;
 use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
@@ -33,8 +34,9 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "layout_id" = "layout_id",
  *     "label" = "label",
  *     "structure" = "structure",
+ *     "default_breakpoints" = "default_breakpoints",
  *     "breakpoints" = "breakpoints",
- *     "weight" = "weight",
+  *    "weight" = "weight",
  *   },
  *   config_export = {
  *     "id" = "id",
@@ -202,7 +204,7 @@ class LayoutOption extends ConfigEntityBase implements LayoutOptionInterface {
   }
 
   /**
-   * @return array
+   * {@inheritdoc}
    */
   public function getDefaultBreakpointsIds() {
     $ids = [];
@@ -217,7 +219,7 @@ class LayoutOption extends ConfigEntityBase implements LayoutOptionInterface {
   }
 
   /**
-   * @return array
+   * {@inheritdoc}
    */
   public function getDefaultBreakpointsLabels() {
     $labels = [];
@@ -233,11 +235,7 @@ class LayoutOption extends ConfigEntityBase implements LayoutOptionInterface {
   }
 
   /**
-   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
-   * @param bool $update
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * {@inheritdoc}
    */
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
     parent::postSave($storage, $update);

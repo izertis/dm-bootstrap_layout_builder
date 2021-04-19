@@ -125,7 +125,7 @@ class LayoutOptionForm extends EntityForm implements ContainerInjectionInterface
       '#options' => $breakpoints,
       '#default_value' => $option->getBreakpointsIds() ?: [],
       '#ajax' => [
-        'callback' => '::ajax_replace_default_breakpoints_callback',
+        'callback' => '::replaceDefaultBreakpointsOptions',
         'wrapper' => 'default-breakpoints-wrapper',
         'method' => 'replace',
       ],
@@ -146,12 +146,15 @@ class LayoutOptionForm extends EntityForm implements ContainerInjectionInterface
   }
 
   /**
+   * Updates the list of available options for default breakpoints
+   * based on the breakpoints selection
+   *
    * @param $form
    * @param $form_state
    *
    * @return mixed
    */
-  public function ajax_replace_default_breakpoints_callback($form, $form_state) {
+  public function replaceDefaultBreakpointsOptions($form, $form_state) {
     return $form['default_breakpoints'];
   }
 
