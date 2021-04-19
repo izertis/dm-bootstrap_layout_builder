@@ -146,15 +146,19 @@ class LayoutOptionForm extends EntityForm implements ContainerInjectionInterface
   }
 
   /**
-   * Updates the list of available options for default breakpoints
-   * based on the breakpoints selection
    *
-   * @param $form
-   * @param $form_state
+   * AJAX callback to update the default breakpoints element when the selection
+   * changes.
    *
-   * @return mixed
+   * @param array $form
+   * An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * The current state of the form.
+   *
+   * @return array
+   * The default breakpoints element render array.
    */
-  public function replaceDefaultBreakpointsOptions($form, $form_state) {
+  public function replaceDefaultBreakpointsOptions(array $form, FormStateInterface $form_state) {
     return $form['default_breakpoints'];
   }
 

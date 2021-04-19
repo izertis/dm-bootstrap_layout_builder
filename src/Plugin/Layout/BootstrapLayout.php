@@ -382,9 +382,14 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
       if ($layout_options) {
         $options = $this->entityTypeManager->getStorage('blb_layout_option')->loadByProperties(['layout_id' => $layout_id]);
         $default_value = NULL;
-        foreach ($options as $layoutOption) {
-          if (array_search($breakpoint->id(), $layoutOption->getDefaultBreakpointsIds()) !== FALSE) {
-            $default_value = $layoutOption->getStructureId();
+        if ($this->configuration['breakpoints'] && isset($this->configuration['breakpoints'][$breakpoint_id])) {
+          $default_value = $this->configuration['breakpoints'][$breakpoint_id];
+        } else {
+          $options = $this->entityTypeManager->getStorage('blb_layout_option')->loadByProperties(['layout_id' => $layout_id]);
+          foreach ($options as $layoutOption) {
+            if (array_search($breakpoint->id(), $layoutOption->getDefaultBreakpointsIds()) !== FALSE) {
+              $default_value = $layoutOption->getStructureId();
+            }
           }
         }
         $form['ui']['tab_content']['layout']['breakpoints'][$breakpoint_id] = [
