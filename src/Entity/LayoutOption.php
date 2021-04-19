@@ -36,7 +36,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "structure" = "structure",
  *     "default_breakpoints" = "default_breakpoints",
  *     "breakpoints" = "breakpoints",
-  *    "weight" = "weight",
+ *     "weight" = "weight",
  *   },
  *   config_export = {
  *     "id" = "id",
