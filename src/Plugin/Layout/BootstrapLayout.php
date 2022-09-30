@@ -14,8 +14,6 @@ use Drupal\bootstrap_styles\StylesGroup\StylesGroupManager;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Render\Element;
-use Drupal\bootstrap_styles\Ajax\RefreshResponsive;
-use Drupal\bootstrap_styles\ResponsiveTrait;
 
 /**
  * A layout from our bootstrap layout builder.
@@ -26,8 +24,6 @@ use Drupal\bootstrap_styles\ResponsiveTrait;
  * )
  */
 class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInterface {
-
-  use ResponsiveTrait;
 
   /**
    * The config factory.
@@ -247,21 +243,6 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
   }
 
   /**
-   * Helper function to get responsive status.
-   *
-   * @return bool
-   *   responsive status.
-   */
-  public function responsiveIsEnabled() {
-    $config = $this->configFactory->get('bootstrap_layout_builder.settings');
-    $responsive = FALSE;
-    if ($config->get('responsive')) {
-      $responsive = (bool) $config->get('responsive');
-    }
-    return $responsive;
-  }
-
-  /**
    * Helper function to get the options of given style name.
    *
    * @param string $name
@@ -331,11 +312,6 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
         'role' => 'tablist',
       ],
     ];
-
-    if ($this->responsiveIsEnabled()) {
-      // Add the responsive previewer.
-      $this->buildResponsivePreviewer($form['ui']);
-    }
 
     $form['ui']['tab_content'] = [
       '#type' => 'container',
@@ -536,12 +512,7 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
     // Check if the live preview enabled.
     if ($this->livePreviewIsEnabled()) {
       // Add the ajax live preview to form elements.
-      $this->addAjaxLivePreviewToElements($form['ui']['tab_content']);
-    }
-    // Check if the responsive enabled.
-    if ($this->responsiveIsEnabled()) {
-      // Attach responsive preview.
-      $form['#attached']['library'][] = 'bootstrap_styles/bs_responsive_preview';
+      $this->addAjaxLivePreviewToElement($form['ui']['tab_content']);
     }
 
     // Attach Bootstrap Styles base library.
@@ -554,9 +525,12 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
   }
 
   /**
-   *
+   * Add live preview to element.
+   * 
+   * @param array $element
+   *   The target element.
    */
-  public function addAjaxLivePreviewToElements(array &$element) {
+  public function addAjaxLivePreviewToElement(array &$element) {
     $types = [
       'radios',
       'radio',
@@ -578,13 +552,13 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
 
     if (Element::children($element)) {
       foreach (Element::children($element) as $key) {
-        $this->addAjaxLivePreviewToElements($element[$key]);
+        $this->addAjaxLivePreviewToElement($element[$key]);
       }
     }
   }
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function livePreviewCallback(array $form, FormStateInterface $form_state) {
     $form_state->getFormObject()->submitForm($form, $form_state);
@@ -599,7 +573,6 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
 
     $response = new AjaxResponse();
     $response->addCommand(new ReplaceCommand('#layout-builder', $layout));
-    $response->addCommand(new RefreshResponsive('#layout-builder', NULL, $data));
 
     return $response;
   }
