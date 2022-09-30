@@ -324,7 +324,7 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
           'title' => $tab['title'],
           'target' => $tab['machine_name'],
           'active' => isset($tab['active']) && $tab['active'] == TRUE ? 'active' : '',
-          'icon' => t('<img class="blb_icon" src="/' . drupal_get_path('module', 'bootstrap_layout_builder') . '/images/ui/' . ($tab['icon'] ? $tab['icon'] : 'default.svg') . '" />'),
+          'icon' => t('<img class="blb_icon" src="/' . \Drupal::service('extension.list.module')->getPath('bootstrap_layout_builder') . '/images/ui/' . ($tab['icon'] ? $tab['icon'] : 'default.svg') . '" />'),
         ],
       ];
 
