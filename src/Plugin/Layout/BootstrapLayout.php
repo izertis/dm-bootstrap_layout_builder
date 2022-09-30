@@ -594,7 +594,7 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
     ];
 
     $data = [];
-    $tempstore = \Drupal::service('user.private_tempstore')->get('bootstrap_styles');
+    $tempstore = \Drupal::service('tempstore.private')->get('bootstrap_styles');
     $data['active_device'] = $tempstore->get('active_device');
 
     $response = new AjaxResponse();
