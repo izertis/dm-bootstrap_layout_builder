@@ -443,7 +443,7 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
 
         // Check if the live preview enabled.
         if ($this->livePreviewIsEnabled()) {
-          $form['ui']['tab_content']['layout']['breakpoints'][$breakpoint_id]['#ajax']['callback'] = [__CLASS__, 'livePreviewCallback'];
+          $form['ui']['tab_content']['layout']['breakpoints'][$breakpoint_id]['#ajax']['callback'] = [$this, 'livePreviewCallback'];
           $form['ui']['tab_content']['layout']['breakpoints'][$breakpoint_id]['#ajax']['event'] = 'click';
           $form['ui']['tab_content']['layout']['breakpoints'][$breakpoint_id]['#ajax']['progress'] = ['type' => 'none'];
         }
@@ -571,7 +571,7 @@ class BootstrapLayout extends LayoutDefault implements ContainerFactoryPluginInt
     }
 
     if (in_array($element['#type'], $types) && !isset($element['#ajax']) && !isset($element['#disable_live_preview'])) {
-      $element['#ajax']['callback'] = [__CLASS__, 'livePreviewCallback'];
+      $element['#ajax']['callback'] = [$this, 'livePreviewCallback'];
       $element['#ajax']['event'] = 'change';
       $element['#ajax']['progress'] = ['type' => 'none'];
     }
