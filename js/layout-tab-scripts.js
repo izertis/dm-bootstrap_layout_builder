@@ -30,7 +30,9 @@
       $('.blb_breakpoint_cols', context).each(function () {
         const numOfCols = 12;
         // .custom-control, .custom-radio to solve Bario issues.
-        $(this).find('.form-item, .custom-control, .custom-radio').once().each(function () {
+        $(once('form_item_once', '.form-item, .custom-control, .custom-radio', this)).each(function () {
+          // Añadido para que se vean las opciones del formulario bien ya que debido a otro estilo que tiene mas prefeerencia lo descuadra
+          $('#drupal-off-canvas .blb_breakpoint_cols label').css('display', 'flex');
           var cols = $(this).find('input').val().replace('blb_col_', '');
           var colsConfig = cols.split('_');
           var colsLabel = $(this).find('label');
